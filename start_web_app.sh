@@ -3,6 +3,7 @@
 # 文件着色分析工具 - 本地启动脚本
 # 作者: chenhao
 # 日期: 2025-08-17
+source ./venv/bin/activate
 
 echo "=========================================="
 echo "文件着色分析工具 - Web版启动脚本"
@@ -44,7 +45,7 @@ echo "按 Ctrl+C 停止应用"
 echo "=========================================="
 
 # 启动应用
-python web_app.py
+nohup python web_app.py > app.log 2>&1 &
 
 echo "应用已停止"
 echo "日志已保存到 web_app.log 文件中"
