@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+APP_DIR="$(cd "$(dirname "$0")" && pwd)"
+PID_FILE="$APP_DIR/gunicorn.pid"
+
+if [ ! -f "$PID_FILE" ]; then
+  echo "未发现 PID 文件：$PID_FILE，可能未启动。"
+  exit 0
+fi
+
+PID="$(cat "$PID_FILE" || true)"
+if [ -z "$PID" ]; then
+  echo "PID 文件为空，直接清理。"
+  rm -f "$PID_FILE"
+  exit 0
+fi
+
+if ps -p "$PID" > /dev/null 2>&1; then
+  echo "停止 Gunicorn：PID $PID"
+  kill "$PID" || true
+  # 等 5 秒看是否退出
+  for i in {1..10}; do
+    if ps -p "$PID" > /dev/null 2>&1; then
+      sleep 0.5
+    else
+      break
+    fi
+  done
+  # 若仍在，强杀
+  if ps -p "$PID" > /dev/null 2>&1; then
+    echo "进程未退出，执行 kill -9"
+    kill -9 "$PID" || true
+  fi
+else
+  echo "PID $PID 不存在进程。"
+fi
+
+rm -f "$PID_FILE"
+echo "✅ 已停止。"

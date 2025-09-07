@@ -1,0 +1,51 @@
+<!-- templates/upload.html -->
+<!doctype html>
+<html lang="zh">
+<head>
+    <meta charset="utf-8" />
+    <title>文件着色分析工具（Web）</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+        body { font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; margin: 40px; }
+        .card { max-width: 720px; margin: 0 auto; padding: 24px; border: 1px solid #eee; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,0,0,0.06); }
+        h1 { margin-top: 0; }
+        .line { margin: 16px 0; }
+        .hint { color: #666; font-size: 14px; }
+        .btn { background: #1a73e8; color: #fff; padding: 10px 16px; border: 0; border-radius: 10px; cursor: pointer; font-size: 16px; }
+        .btn:hover { filter: brightness(0.95); }
+        .alert { background: #fffbe6; border:1px solid #ffe58f; color:#614700; padding:10px 14px; border-radius:8px; margin:12px 0; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h1>文件着色分析工具（Web）</h1>
+    <p class="hint">上传两个 Excel：<br>① <b>上传分析依据</b>（含“上传计划/路径/文件名称”等列）<br>② <b>需要分析的文件</b>（含“1-6级文件夹/文件编号”等列）</p>
+
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            {% for m in messages %}
+                <div class="alert">{{ m }}</div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+
+    <form method="post" enctype="multipart/form-data">
+        <div class="line">
+            <label>上传分析依据文件（.xls/.xlsx）：</label><br/>
+            <input type="file" name="file1" accept=".xls,.xlsx" required />
+        </div>
+
+        <div class="line">
+            <label>需要分析的文件（.xls/.xlsx）：</label><br/>
+            <input type="file" name="file2" accept=".xls,.xlsx" required />
+        </div>
+
+        <div class="line hint">最大上传大小默认为 {{ (config.MAX_CONTENT_LENGTH or 0) // (1024*1024) }} MB（可在 runtime.env 配置）</div>
+
+        <div class="line">
+            <button class="btn" type="submit">开始分析</button>
+        </div>
+    </form>
+</div>
+</body>
+</html>
